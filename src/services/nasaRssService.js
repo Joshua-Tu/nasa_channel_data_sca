@@ -12,7 +12,7 @@ class NasaRssService {
 
   async getData(channelName) {
     try {
-      const result = await this.#axiosInstance.get(channelName);
+      const result = await this.#axiosInstance.get(channelName + '.rss');
       return result.data;
     } catch (error) {
       throw { errorName: 'Failed to get RSS feed data', errorDetails: error};
