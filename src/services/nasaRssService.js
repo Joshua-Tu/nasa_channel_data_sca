@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-class RssFeedService {
+class NasaRssService {
   #axiosInstance
   
   constructor() {
@@ -19,3 +19,15 @@ class RssFeedService {
     }
   }
 }
+
+let instance;
+
+const getInstance = () => {
+  if (!instance) {
+    instance = new NasaRssService()
+  }
+
+  return instance;
+}
+
+module.exports = getInstance();

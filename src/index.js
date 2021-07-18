@@ -1,9 +1,19 @@
-const axios = require('axios');
+const express = require('express');
+const helmet = require('helmet');
 const convertXml2Json = require('xml-js');
 
-const express = require('express');
+const nasaRssFeed = require('./services/nasaRssService');
+
 const app = express();
 const port = 3000;
+
+app.use(helmet());
+
+app.use((_req, res, next) => {
+  console.log('middleware');
+  res.locals = 'nasaRss';
+  next()
+});
 
 app.get('/', async (req, res) => {
   const result = await axios.get('https://www.nasa.gov/rss/dyn/Houston-We-Have-a-Podcast.rss');
