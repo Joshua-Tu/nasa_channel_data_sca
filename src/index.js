@@ -30,17 +30,27 @@ app.use(async (_req, res, next) => {
 });
 
 app.get('/', (_req, res) => {
-  const dataWithEDT = channelContentFinder.findFirstEpisodes(res.locals.nasaRssFeed);
+  try {
+    const dataWithEDT = channelContentFinder.findFirstEpisodes(res.locals.nasaRssFeed);
 
-  const dataWithAEST = channelContentFinder.findEdtEpisodes(dataWithEDT);
-
-  res.json(dataWithAEST);
+    const dataWithAEST = channelContentFinder.findEdtEpisodes(dataWithEDT);
+  
+    res.json(dataWithAEST);
+  } catch (error) {
+    res.status(500).send('Internal server error');
+  }
 });
 
 app.get('/sort', (req, res) => {
-  console.log(req.query.order);
+  const dataWithEDT = channelContentFinder.findFirstEpisodes(res.locals.nasaRssFeed);
+
+
   res.json('sorted order!');
 });
+
+app.all('*', (_req, res) => {
+  res.status(404).send('Page not found');
+})
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
