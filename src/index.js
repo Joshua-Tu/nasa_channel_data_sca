@@ -41,12 +41,14 @@ app.get('/', (_req, res) => {
   }
 });
 
-app.get('/sort', (_req, res) => {
+app.get('/sort', (req, res) => {
   const dataWithEDT = channelContentFinder.findFirstNEpisodes(res.locals.nasaRssFeed);
 
-  const sortedDataWithEDT = channelContentFinder.findOrderedEpisodes(dataWithEDT, _req.query.order);
+  const orderedDataWithEDT = channelContentFinder.findOrderedEpisodes(dataWithEDT, req.query.order);
 
-  res.json(sortedDataWithEDT);
+  const dataWithAEST = channelContentFinder.findEdtEpisodes(orderedDataWithEDT);
+
+  res.json(dataWithAEST);
 });
 
 app.all('*', (_req, res) => {
