@@ -2,7 +2,8 @@ const express = require('express');
 const helmet = require('helmet');
 
 const convertXml2Json = require('xml-js');
-const moment = require('moment');
+const moment = require('moment-timezone');
+const { convertISODateToAEST } = require('./utilities/format-iso-date-to-AEST');
 
 const nasaRssFeed = require('./services/nasaRssService');
 const cacheService = require('./services/cacheService');
@@ -63,5 +64,9 @@ app.listen(port, () => {
 
 // console.log(moment('Fri, 16 Jul 2021 09:31 EDT').format('LLL').toString().toLowerCase());
 // // console.log(moment('Fri, 02 Jul 2021 11:04 EDT').format('LLL').toString().toLowerCase());
-const momentObj = moment('Fri, 16 Jul 2021 09:31 EDT').format('DD/MM/YYYY, h:mm:ss a');
-// console.log(momentObj);
+const aestTime = moment.tz('Fri, 16 Jul 2021 09:31 EDT', 'Australia/Sydney').format('DD/MM/YYYY, h:mm:ss a') + ' AEST';
+const timeObj1 = new Date('Fri, 16 Jul 2021 09:31 EDT');
+const timeObj2 = new Date('Sat, 17 Jul 2021 09:31 EDT');
+console.log({ aestTime, asc: timeObj1 < timeObj2 });
+console.log(convertISODateToAEST('Fri, 16 Jul 2021 09:31 EDT'));
+console.log({ timeObj2 })
