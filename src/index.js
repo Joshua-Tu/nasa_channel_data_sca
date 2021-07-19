@@ -1,6 +1,8 @@
 const express = require('express');
 const helmet = require('helmet');
+
 const convertXml2Json = require('xml-js');
+const moment = require('moment');
 
 const nasaRssFeed = require('./services/nasaRssService');
 const cacheService = require('./services/cacheService');
@@ -28,9 +30,26 @@ app.use(async (_req, res, next) => {
 
 app.get('/', (_req, res) => {
 
-  
+  const { title: { _text: title } , item: items, description: { _text: description } } = res.locals.nasaRssFeed;
 
-  res.json(res.locals.nasaRssFeed);
+  const firstTenItems = items.filter((_item, idx) => idx <= 9);
+
+  const episodes = firstTenItems.map(item => {
+
+    return {
+      title: item.title._text,
+      audioUrl: item.enclosure._attributes.url,
+      publishedDate: moment((item.pubDate._text)).format('DD/MM/YYYY, h:mm:ss a ZZ')
+    }
+  });
+
+  const result = {
+    title,
+    description,
+    episodes
+  };
+
+  res.json(result);
 });
 
 app.get('/sort', (req, res) => {
@@ -41,3 +60,8 @@ app.get('/sort', (req, res) => {
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
 });
+
+// console.log(moment('Fri, 16 Jul 2021 09:31 EDT').format('LLL').toString().toLowerCase());
+// // console.log(moment('Fri, 02 Jul 2021 11:04 EDT').format('LLL').toString().toLowerCase());
+const momentObj = moment('Fri, 16 Jul 2021 09:31 EDT').format('DD/MM/YYYY, h:mm:ss a');
+// console.log(momentObj);
