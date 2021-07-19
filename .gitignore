@@ -6,5 +6,8 @@ npm-debug.log*
 # Dependency directories
 node_modules/
 
-#Debugger configurations
-.vscode/launch.json
+# Debugger configurations
+.vscode/
+
+# Environment variable
+.env
