@@ -31,7 +31,7 @@ app.use(async (_req, res, next) => {
 
 app.get('/', (_req, res) => {
   try {
-    const dataWithEDT = channelContentFinder.findFirstEpisodes(res.locals.nasaRssFeed);
+    const dataWithEDT = channelContentFinder.findFirstNEpisodes(res.locals.nasaRssFeed);
 
     const dataWithAEST = channelContentFinder.findEdtEpisodes(dataWithEDT);
   
@@ -41,11 +41,12 @@ app.get('/', (_req, res) => {
   }
 });
 
-app.get('/sort', (req, res) => {
-  const dataWithEDT = channelContentFinder.findFirstEpisodes(res.locals.nasaRssFeed);
+app.get('/sort', (_req, res) => {
+  const dataWithEDT = channelContentFinder.findFirstNEpisodes(res.locals.nasaRssFeed);
 
+  const sortedDataWithEDT = channelContentFinder.findOrderedEpisodes(dataWithEDT, _req.query.order);
 
-  res.json('sorted order!');
+  res.json(sortedDataWithEDT);
 });
 
 app.all('*', (_req, res) => {
