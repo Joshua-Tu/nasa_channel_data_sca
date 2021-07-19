@@ -1,3 +1,4 @@
+require('dotenv').config();
 const redis = require('redis');
 
 class CacheService {
@@ -9,7 +10,7 @@ class CacheService {
     this.#KEY_PREFIX = keyPrefix;
   }
 
-  async set(key, value, ttlSeconds = 10) {
+  async set(key, value, ttlSeconds = +process.env.REQUEST_CACHE_TTL) {
     return new Promise((resolve, reject) => {
       this.#client.set(`${this.#KEY_PREFIX}:${key}`, value, 'EX', ttlSeconds, (error, result) => {
         if (error) return reject(error);
@@ -32,17 +33,21 @@ class CacheService {
   async getOrSetCache(callback, key, ttlSeconds = 10) {
     return new Promise((resolve, reject) => {
       const fullKey = `${this.#KEY_PREFIX}:${key}`;
+      let freshResult;
 
       this.#client.get(fullKey, async (error, result) => {
-        if (error) return reject(error);
+        if (error) console.log({ errorName: 'Cache error', errorDetails: error });
         if (result != null) return resolve(JSON.parse(result));
 
-        const freshResult = await callback();
+        freshResult = await callback();
+
         this.#client.setex(fullKey, ttlSeconds, JSON.stringify(freshResult), (error, _reply) => {
-          if (error) return reject(error);
+          if (error) console.log({ errorName: 'Cache error', errorDetails: error });
 
           return resolve(freshResult);
-        })
+        });
+
+        return resolve(freshResult);
       })
     });
   }

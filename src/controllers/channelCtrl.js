@@ -1,7 +1,11 @@
+require('dotenv').config();
+const cacheService = require('../services/cacheService');
 const channelContentFinder = require('../utilities/find-channel-content');
 
-function channelRootCtrl(_req, res) {
+async function channelRootCtrl(_req, res) {
   try {
+
+
     const dataWithEDT = channelContentFinder.findFirstNEpisodes(res.locals.nasaRssFeed);
 
     const dataWithAEST = channelContentFinder.findEdtEpisodes(dataWithEDT);
@@ -12,7 +16,7 @@ function channelRootCtrl(_req, res) {
   }
 }
 
-function channelOrderedEpisodesCtrl(req, res) {
+async function channelOrderedEpisodesCtrl(req, res) {
   try {
     const dataWithEDT = channelContentFinder.findFirstNEpisodes(res.locals.nasaRssFeed);
 
